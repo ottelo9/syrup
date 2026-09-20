@@ -34,11 +34,8 @@ gelaufen**. Insbesondere:
 
 ### 1. Integration installieren
 
-HACS verteilt Integrationen, keine Add-ons – SYRUP ist deshalb ein
-Custom Component. In HACS unter *Benutzerdefinierte Repositories* dieses
-Repository als Typ **Integration** hinzufügen, installieren, Home Assistant
-neu starten. Alternativ `custom_components/syrup` nach
-`<config>/custom_components/syrup` kopieren.
+In HACS unter *Benutzerdefinierte Repositories* die URL https://github.com/ottelo9/syrup als Typ **Integration** hinzufügen, installieren, Home Assistant
+neu starten. Alternativ `custom_components/syrup` nach `<config>/custom_components/syrup` kopieren.
 
 Danach unter *Einstellungen → Geräte & Dienste → Integration hinzufügen*
 nach **SYRUP** suchen und die Seriennummer der Box eintragen (steht in der
@@ -46,8 +43,7 @@ SYR-App, oder im Feld `getSRN` eines Mitschnitts).
 
 ### 2. Port 80 auf Home Assistant umbiegen
 
-Das Gerät spricht **Port 80**, Home Assistant lauscht auf 8123. Eine der
-folgenden Brücken wird gebraucht:
+Das SYR Gerät kommuniziert auf **Port 80**, Home Assistant auf 8123, deshalb wird eine der folgenden Brücken wird gebraucht:
 
 * **Reverse Proxy** (empfohlen, wenn ohnehin einer läuft). In nginx:
 
