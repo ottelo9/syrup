@@ -1,13 +1,13 @@
 # SYRUP
 
-**SY**R **R**eversed **U**nclouded **P**rotocol -- eine Home-Assistant-Integration,
+**SY**R **R**eversed **U**nclouded **P**rotocol – eine Home-Assistant-Integration,
 die einen **SYR Safe-T+ Connect** Leckageschutz ohne Herstellercloud einbindet.
 
-Das Geraet hat keine lokale API: Port 5333, ueber den die groessere
+Das Gerät hat keine lokale API: Port 5333, über den die größere
 *SafeTech Connect* ihre JSON-Schnittstelle anbietet, ist beim Safe-T+
 geschlossen, und der Webserver auf Port 80 liefert auf jeden Pfad eine leere
-Antwort. Es gibt nur einen Weg an die Daten -- den, den das Geraet selbst
-benutzt: den 10-Sekunden-Takt, in dem es unverschluesselt an
+Antwort. Es gibt nur einen Weg an die Daten – den, den das Gerät selbst
+benutzt: den 10-Sekunden-Takt, in dem es unverschlüsselt an
 `iot1.syrconnect.de` funkt.
 
 SYRUP stellt genau diesen Endpunkt in Home Assistant bereit. Zeigt
@@ -19,37 +19,37 @@ Wie die Nutzlast aufgebaut und verschleiert ist, steht in
 
 ## Stand
 
-Codec und Protokollauswertung sind gegen echte Mitschnitte geprueft und durch
-die Testsuite abgedeckt (`pytest`, 19 Tests). Der Home-Assistant-Teil --
-Config-Flow, Entitaeten, HTTP-View -- ist **noch nicht am lebenden Geraet
+Codec und Protokollauswertung sind gegen echte Mitschnitte geprüft und durch
+die Testsuite abgedeckt (`pytest`, 19 Tests). Der Home-Assistant-Teil –
+Config-Flow, Entitäten, HTTP-View – ist **noch nicht am lebenden Gerät
 gelaufen**. Insbesondere:
 
-* Ob das Geraet `set`-Befehle aus der Antwort annimmt, ist **nicht
-  verifiziert** -- das Ventil laesst sich also moeglicherweise nicht schalten.
-* Ob das Geraet die Pruefsumme `cs` einer Antwort prueft, ist offen.
-* Der Leckageschutz selbst arbeitet autark im Geraet. Ihn beeintraechtigt
+* Ob das Gerät `set`-Befehle aus der Antwort annimmt, ist **nicht
+  verifiziert** – das Ventil lässt sich also möglicherweise nicht schalten.
+* Ob das Gerät die Prüfsumme `cs` einer Antwort prüft, ist offen.
+* Der Leckageschutz selbst arbeitet autark im Gerät. Ihn beeinträchtigt
   weder die Umleitung noch ein Ausfall von Home Assistant.
 
 ## Einrichten
 
 ### 1. Integration installieren
 
-HACS verteilt Integrationen, keine Add-ons -- SYRUP ist deshalb ein
+HACS verteilt Integrationen, keine Add-ons – SYRUP ist deshalb ein
 Custom Component. In HACS unter *Benutzerdefinierte Repositories* dieses
-Repository als Typ **Integration** hinzufuegen, installieren, Home Assistant
+Repository als Typ **Integration** hinzufügen, installieren, Home Assistant
 neu starten. Alternativ `custom_components/syrup` nach
 `<config>/custom_components/syrup` kopieren.
 
-Danach unter *Einstellungen -> Geraete & Dienste -> Integration hinzufuegen*
+Danach unter *Einstellungen → Geräte & Dienste → Integration hinzufügen*
 nach **SYRUP** suchen und die Seriennummer der Box eintragen (steht in der
 SYR-App, oder im Feld `getSRN` eines Mitschnitts).
 
 ### 2. Port 80 auf Home Assistant umbiegen
 
-Das Geraet spricht **Port 80**, Home Assistant lauscht auf 8123. Eine der
-folgenden Bruecken wird gebraucht:
+Das Gerät spricht **Port 80**, Home Assistant lauscht auf 8123. Eine der
+folgenden Brücken wird gebraucht:
 
-* **Reverse Proxy** (empfohlen, wenn ohnehin einer laeuft). In nginx:
+* **Reverse Proxy** (empfohlen, wenn ohnehin einer läuft). In nginx:
 
   ```nginx
   location /WebServices/ {
@@ -64,7 +64,7 @@ folgenden Bruecken wird gebraucht:
     server_port: 80
   ```
 
-  Damit wandert allerdings die gesamte Oberflaeche auf Port 80.
+  Damit wandert allerdings die gesamte Oberfläche auf Port 80.
 
 * **Portweiterleitung auf dem HA-Host**, zum Beispiel
   `iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8123`.
@@ -72,24 +72,24 @@ folgenden Bruecken wird gebraucht:
 ### 3. DNS umbiegen
 
 `iot1.syrconnect.de` muss im Heimnetz auf die Adresse aus Schritt 2 zeigen.
-Die FRITZ!Box kann das selbst nicht -- sie kennt keine eigenen Host-Eintraege.
+Die FRITZ!Box kann das selbst nicht – sie kennt keine eigenen Host-Einträge.
 Also einen lokalen DNS-Server (Pi-hole, AdGuard Home, dnsmasq) mit einem
-entsprechenden Eintrag betreiben und ihn unter *Heimnetz -> Netzwerk ->
-Netzwerkeinstellungen -> IPv4-Konfiguration -> Lokaler DNS-Server* eintragen.
+entsprechenden Eintrag betreiben und ihn unter *Heimnetz → Netzwerk →
+Netzwerkeinstellungen → IPv4-Konfiguration → Lokaler DNS-Server* eintragen.
 
 ### 4. Weiterleitung entscheiden
 
-Im Einrichtungsdialog steht `relay_url` standardmaessig auf der echten Cloud.
-Damit reicht SYRUP jede Meldung weiter und gibt die Cloud-Antwort ans Geraet
-zurueck: **SYR-App und Cloud funktionieren normal weiter**, SYRUP liest nur
+Im Einrichtungsdialog steht `relay_url` standardmäßig auf der echten Cloud.
+Damit reicht SYRUP jede Meldung weiter und gibt die Cloud-Antwort ans Gerät
+zurück: **SYR-App und Cloud funktionieren normal weiter**, SYRUP liest nur
 mit. Nur wenn ein Schaltbefehl ansteht, antwortet SYRUP selbst.
 
-Feld leeren = reiner Inselbetrieb, die Cloud sieht das Geraet dann nicht mehr.
+Feld leeren = reiner Inselbetrieb, die Cloud sieht das Gerät dann nicht mehr.
 
-## Entitaeten
+## Entitäten
 
-| Entitaet | Quelle | Anmerkung |
-|----------|--------|-----------|
+| Entität | Quelle | Anmerkung |
+|---------|--------|-----------|
 | Wasserdruck | `getBAR` | mbar |
 | Gesamtvolumen | `getVOL` | Liter, `total_increasing` |
 | Laufende Entnahme | `getAVO` | mL |
@@ -97,6 +97,15 @@ Feld leeren = reiner Inselbetrieb, die Cloud sieht das Geraet dann nicht mehr.
 | Alarm | `getALA` | `FF` = kein Alarm |
 | Alarmcode / Alarmverlauf / Wartungsdatum | `getALA`, `getALM`, `getSRV` | Diagnose |
 | Absperrventil | `getAB` / `setAB` | Schalten unverifiziert |
+
+## Verwandte Geräte
+
+Die Control-Box stammt nicht von SYR: der User-Agent lautet
+`Husty Control-Box`, der Firmware-Update-Pfad zeigt auf `husty.pl`. Das
+Protokoll dürfte deshalb auch in Geräten anderer Marken stecken. Als
+baugleich beziehungsweise verwandt gelten unter anderem **Ditech**,
+**CONEL**, **Sanibel**, **concept** und der **Hansgrohe Pontos Base**.
+Getestet ist davon nichts – Rückmeldungen willkommen.
 
 ## Werkzeuge
 
@@ -113,8 +122,8 @@ Wireshark noch Python.
 
 ## Hinweis zu den Testdaten
 
-`tests/fixtures/` enthaelt echte Mitschnitte inklusive Seriennummer und
-MAC-Adresse des Geraets. Vor einer Veroeffentlichung des Repositories
+`tests/fixtures/` enthält echte Mitschnitte inklusive Seriennummer und
+MAC-Adresse des Geräts. Vor einer Veröffentlichung des Repositories
 entweder anonymisieren oder entfernen.
 
 ## Lizenz
