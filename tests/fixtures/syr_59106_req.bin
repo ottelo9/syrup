@@ -1,0 +1,14 @@
+POST /WebServices/SyrConnectDeviceWebService.asmx/GetAllCommands HTTP/1.1
+Host: iot1.syrconnect.de
+User-Agent: Husty Control-Box
+Accept-Language: pl,en-us;q=0.7,en;q=0.3
+Accept-Encoding: identity
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 1810
+Connection: keep-alive
+
+xml=<?xml version="1.0" encoding="utf-8"?>
+<sc>
+<cp v="90CC" />
+<dat v="*r(*u6x€4ö,esbWR[ü$?p46`€4PWUBYDO49(*u6x€4ö,qsbEDX46`€4 .EFWWSA49(*u6x€4ö,qsb@SD46`€4Ewps;B=6@$8ÜÜs49(*u6x€4ö,qsb!ö46`€4Ü49(*u6x€4ö,qsbWT46`€4ö49(*u6x€4ö,qsbWZW46`€4PP49(*u6x€4ö,qsbWZ[46`€4Wzwd{e,6Wä6Wä6Wä6Wä6Wä6;0qb-Wä6Wä6Wä649(*u6x€4ö,qsbW@Y46`€4Ü{Z49(*u6x€4ö,qsbTWD46`€4$#$/6{twd46ö€Sxqzie~?49(*u6x€4ö,qsbXSB46`€4WRU,/ää6 :Ü#@49(*u6x€4ö,qsbXFE46`€4ööÄ!49(*u6x€4ö,qsbDSZ46`€4Ü49(*u6x€4ö,qsbED@46`€4ö/8Ü.8ö/49(*u6x€4ö,qsbBö46`€4ä49(*u6x€4ö,qsbB$46`€4ö49(*u6x€4ö,qsbBTE46`€4ö49(*u6x€4ö,qsbBU46`€4äÜ49(*u6x€4ö,qsbB[F46`€4Ü49(*u6x€4ö,qsbBY46`€4äÜ49(*u6x€4ö,qsbBFW46`€4ä$49(*u6x€4ö,qsbBOF46`€4ö49(*u6x€4ö,qsbCZ46`€4Ü49(*u6x€4ö,qsbCX_46`€4Ü49(*u6x€4ö,qsb@Z@46`€4$Ü49(*u6x€4ö,qsb@YZ46`€4@yzMZK/#ö!$!49(*u6x€4ö,uzdWR[46`€4WR[_X6DSESB49(*9r(*ui6{€4!Ü,Tä,R#,ö/,ÄU,TÄ46p€4ö8.#46t€4ä469(*ue6`€4.öU 49(" />
+</sc>

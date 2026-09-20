@@ -1,0 +1,17 @@
+HTTP/1.1 200 OK
+Cache-Control: private, max-age=0
+Content-Type: text/xml; charset=utf-8
+Server: 
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+X-Permitted-Cross-Domain-Policies: master-only
+X-Content-Type-Options: nosniff
+Referrer-Policy: no-referrer
+Date: Sun, 20 Sep 2026 11:23:12 GMT
+Content-Length: 1270
+
+<?xml version="1.0" encoding="utf-8"?>
+<sc>
+  <cp v="7728" />
+  <dat v="(gw*(p*(w4z)6ä.gq`UPY64b)6ÖÜ=r64;*(w4z)6ä.sq`GFZ64b)664;*(w4z)6ä.sq`BQF64b)664;*(w4z)6ä.sq`#ä64b)664;*(w4z)6ä.sq`UV64b)664;*(w4z)6ä.sq`UXU64b)664;*(w4z)6ä.sq`UXY64b)664;*(w4z)6ä.sq`UB[64b)664;*(w4z)6ä.sq`VUF64b)664;*(w4z)6ä.sq`VU@64b)664;*(w4z)6ä.sq`VX@64b)664;*(w4z)6ä.sq`VGU64b)664;*(w4z)6ä.sq`VG]64b)664;*(w4z)6ä.sq`VAN64b)664;*(w4z)6ä.sq`WQX64b)664;*(w4z)6ä.sq`WZ[64b)664;*(w4z)6ä.sq`PVP64b)664;*(w4z)6ä.sq`PV@64b)664;*(w4z)6ä.sq`PWY64b)664;*(w4z)6ä.sq`PYU64b)664;*(w4z)6ä.sq`P[Y64b)664;*(w4z)6ä.sq`PDX64b)664;*(w4z)6ä.sq`PFD64b)664;*(w4z)6ä.sq`PG@64b)664;*(w4z)6ä.sq`P@W64b)664;*(w4z)6ä.sq`QL]64b)664;*(w4z)6ä.sq`QL@64b)664;*(w4z)6ä.sq`RXX64b)664;*(w4z)6ä.sq`]Z@64b)664;*(w4z)6ä.sq`XQ64b)664;*(w4z)6ä.sq`XZS64b)664;*(w4z)6ä.sq`ZQ@64b)664;*(w4z)6ä.sq`ZDG64b)664;*(w4z)6ä.sq`FQX64b)664;*(w4z)6ä.sq`GFB64b)664;*(w4z)6ä.sq`@ä64b)664;*(w4z)6ä.sq`@Ü64b)664;*(w4z)6ä.sq`@VG64b)664;*(w4z)6ä.sq`@W64b)664;*(w4z)6ä.sq`@YD64b)664;*(w4z)6ä.sq`@[64b)664;*(w4z)6ä.sq`@DU64b)664;*(w4z)6ä.sq`@MD64b)664;*(w4z)6ä.sq`AX64b)664;*(w4z)6ä.sq`AZ]64b)664;*(w4z)6ä.sq`BXB64b)664;*(w4z)6ä.sq`B[X64b)664;*(w4z)6ä.wxfUPY64b)664;*(;p*(w`4f`)6ä$64;*(;gw*" />
+</sc>

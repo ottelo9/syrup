@@ -1,0 +1,13 @@
+{
+  "domain": "syrup",
+  "name": "SYRUP - SYR Safe-T+ Connect lokal",
+  "codeowners": [],
+  "config_flow": true,
+  "dependencies": ["http"],
+  "documentation": "https://github.com/ottelo/syrup",
+  "integration_type": "device",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/ottelo/syrup/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}

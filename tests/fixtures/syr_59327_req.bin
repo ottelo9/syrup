@@ -1,0 +1,14 @@
+POST /WebServices/SyrConnectDeviceWebService.asmx/GetAllCommands HTTP/1.1
+Host: iot1.syrconnect.de
+User-Agent: Husty Control-Box
+Accept-Language: pl,en-us;q=0.7,en;q=0.3
+Accept-Encoding: identity
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 1884
+Connection: keep-alive
+
+xml=<?xml version="1.0" encoding="utf-8"?>
+<sc>
+<cp v="74DD" />
+<dat v="Äz Ä}üp#Ö/$m{j_ZS6,7xÖüh#ÖX_]JQLGÖ1 Ä}üp#Ö/$y{jMLPÖüh#Ö(ÜMN__[IÖ1 Ä}üp#Ö/$y{jH[LÖüh#ÖMax{3J5üH,0..{Ö1 Ä}üp#Ö/$y{j)/Öüh#Ö.Ö1 Ä}üp#Ö/$y{j_\Öüh#Ö/Ö1 Ä}üp#Ö/$y{j_R_Öüh#ÖXXÖ1 Ä}üp#Ö/$y{j_RSÖüh#Ö_ralsm$ü_-ü_-ü_-ü_-ü_-ü38yjä_-ü_-ü_-üÖ1 Ä}üp#Ö/$y{j_HQÖüh#Ö.sRÖ1 Ä}üp#Ö/$y{j\_LÖüh#Ö€Ö1 Ä}üp#Ö/$y{jRPYÖüh#Ö.ü6.#Z{kjm}vü/#[pyrwmv7Ö1 Ä}üp#Ö/$y{jP[JÖüh#Ö_Z]$ö-*ü(2.(HÖ1 Ä}üp#Ö/$y{jPNMÖüh#Ö//)-Ö1 Ä}üp#Ö/$y{jL[RÖüh#Ö.Ö1 Ä}üp#Ö/$y{jMLHÖüh#Ö/ö0.Ü0/öÖ1 Ä}üp#Ö/$y{jJ/Öüh#Ö-Ö1 Ä}üp#Ö/$y{jJ,Öüh#Ö/Ö1 Ä}üp#Ö/$y{jJ\MÖüh#Ö/Ö1 Ä}üp#Ö/$y{jJ]Öüh#Ö-.Ö1 Ä}üp#Ö/$y{jJSNÖüh#Ö.Ö1 Ä}üp#Ö/$y{jJQÖüh#Ö-.Ö1 Ä}üp#Ö/$y{jJN_Öüh#Ö-,Ö1 Ä}üp#Ö/$y{jJGNÖüh#Ö/Ö1 Ä}üp#Ö/$y{jKRÖüh#Ö.Ö1 Ä}üp#Ö/$y{jKPWÖüh#Ö.Ö1 Ä}üp#Ö/$y{jHRHÖüh#Ö,.Ö1 Ä}üp#Ö/$y{jHQRÖüh#ÖHqrERCö€/),)Ö1 Ä}üp#Ö/$}rl_ZSÖüh#Ö_ZSWPüL[M[JÖ1 Ä1z Ä}wüs#Ö).$\-$Z€$/ö$*]$\*Öüx#Ö/0Ü€Öü|#Ö-Öü1 Ä}müh#ÖÜ/_]Ö1 " />
+</sc>

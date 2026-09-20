@@ -1,0 +1,14 @@
+POST /WebServices/SyrConnectDeviceWebService.asmx/GetAllCommands HTTP/1.1
+Host: iot1.syrconnect.de
+User-Agent: Husty Control-Box
+Accept-Language: pl,en-us;q=0.7,en;q=0.3
+Accept-Encoding: identity
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 1773
+Connection: keep-alive
+
+xml=<?xml version="1.0" encoding="utf-8"?>
+<sc>
+<cp v="6CF4" />
+<dat v="Ü~$Üy:tö8€ ien[^W2(3|8:lö8\[YNUHC85$Üy:tö8€ }enIHT8:lö8,ÄIJ[[_M85$Üy:tö8€ }enL_H8:lö8I{|e7N1:L(4**e85$Üy:tö8€ }en-€8:lö8*85$Üy:tö8€ }en[X8:lö8€85$Üy:tö8€ }en[V[8:lö8\\85$Üy:tö8€ }en[VW8:lö8[v{hwi :[):[):[):[):[):7Ö}n![):[):[):85$Üy:tö8€ }en[LU8:lö8*wV85$Üy:tö8€ }enX[H8:lö8(.--:wx{h85$Üy:t�enT_N8:lö8[^Y #).:,6*,L85$Üy:tö8€ }enTJI8:lö8€€,*85$Üy:tö8€ }enH_V8:lö8*85$Üy:tö8€ }enIHL8:lö8€#4*Ä4€#85$Üy:tö8€ }enN€8:lö8)85$Üy:tö8€ }enN(8:lö8€85$Üy:tö8€ }enNXI8:lö8€85$Üy:tö8€ }enNY8:lö8)*85$Üy:tö8€ }enNWJ8:lö8*85$Üy:tö8€ }enNU8:lö8)*85$Üy:tö8€ }enNJ[8:lö8)(85$Üy:tö8€ }enNCJ8:lö8€85$Üy:tö8€ }enOV8:lö8*85$Üy:tö8€ }enOTS8:lö8*85$Üy:tö8€ }enLVL8:lö8(*85$Üy:tö8€ }enLUV8:lö8LuvAVG#/€-(-85$Üy:tö8€ yvh[^W8:lö8[^WST:H_I_N85$Ü5~$Üys:wö8-* X) ^/ €# .Y X.8:|ö8€4Ä/8:xö8)8:5$Üyi:lö8Ä€/.85$" />
+</sc>
