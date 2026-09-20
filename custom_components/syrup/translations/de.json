@@ -3,11 +3,11 @@
     "step": {
       "user": {
         "title": "SYR Safe-T+ Connect",
-        "description": "Seriennummer der Control-Box eintragen. Sie steht in der SYR-App unter den Geraetedaten oder im Feld getSRN eines Mitschnitts.",
+        "description": "Seriennummer der Control-Box eintragen. Sie steht in der SYR-App unter den Gerätedaten oder im Feld getSRN eines Mitschnitts.",
         "data": {
           "serial": "Seriennummer",
-          "poll_interval": "Meldetakt des Geraets (Sekunden)",
-          "relay_url": "Weiterleitung an die Herstellercloud (leer lassen fuer reinen Inselbetrieb)"
+          "poll_interval": "Meldetakt des Geräts (Sekunden)",
+          "relay_url": "Weiterleitung an die Herstellercloud (leer lassen für reinen Inselbetrieb)"
         }
       }
     },
@@ -20,7 +20,7 @@
       "init": {
         "title": "SYRUP-Einstellungen",
         "data": {
-          "poll_interval": "Meldetakt des Geraets (Sekunden)",
+          "poll_interval": "Meldetakt des Geräts (Sekunden)",
           "relay_url": "Weiterleitung an die Herstellercloud"
         }
       }

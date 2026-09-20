@@ -1,11 +1,11 @@
-"""Auswertung der entschluesselten SYR-Connect-Nachrichten."""
+"""Auswertung der entschlüsselten SYR-Connect-Nachrichten."""
 
 from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
 
-# Parameter, die die Cloud beim Geraet abfragt. Die Liste stammt aus einer
+# Parameter, die die Cloud beim Gerät abfragt. Die Liste stammt aus einer
 # mitgeschnittenen Cloud-Antwort und ist damit die des Herstellers.
 KNOWN_PARAMS: tuple[str, ...] = (
     "SRN", "VER", "71", "AB", "ALA", "ALM", "AVO", "BAR", "BAT", "BLT",
@@ -16,14 +16,14 @@ KNOWN_PARAMS: tuple[str, ...] = (
 )
 
 # <c n="1:getSRN" v="68SPAAEW"/> -- der Verb-Teil kann durch den
-# Firmware-Fehler verstuemmelt sein ("gtSRN", "etSRN", "stADM").
+# Firmware-Fehler verstümmelt sein ("gtSRN", "etSRN", "stADM").
 _CMD_RE = re.compile(r'<c\s+n="(?P<chan>\d+):(?P<verb>[a-z]{0,3})(?P<param>[A-Z0-9]+)"\s+v="(?P<value>[^"]*)"')
 _INFO_RE = re.compile(r'<ci?\s+m="(?P<mac>[^"]*)"\s+f="(?P<fw>[^"]*)"\s+b="(?P<b>[^"]*)"')
 
 
 @dataclass
 class DeviceMessage:
-    """Was ein Geraet in einer Nachricht berichtet."""
+    """Was ein Gerät in einer Nachricht berichtet."""
 
     channel: str = "1"
     values: dict[str, str] = field(default_factory=dict)
@@ -37,11 +37,11 @@ class DeviceMessage:
 
 
 def parse_device_message(xml: str) -> DeviceMessage:
-    """Entschluesseltes Geraete-XML in Werte zerlegen.
+    """Entschlüsseltes Geräte-XML in Werte zerlegen.
 
     Der Rumpf besteht aus mehreren Wurzelelementen (``<d>``, ``<ci>``,
-    ``<cs>``) und ist damit kein gueltiges XML-Dokument -- deshalb wird er
-    mit regulaeren Ausdruecken zerlegt und nicht mit einem Parser.
+    ``<cs>``) und ist damit kein gültiges XML-Dokument -- deshalb wird er
+    mit regulären Ausdrücken zerlegt und nicht mit einem Parser.
     """
     msg = DeviceMessage()
     for match in _CMD_RE.finditer(xml):
@@ -62,14 +62,14 @@ def build_cloud_response(
     commands: dict[str, str] | None = None,
     poll_interval: int = 10,
 ) -> str:
-    """Die Antwort bauen, die das Geraet erwartet.
+    """Die Antwort bauen, die das Gerät erwartet.
 
     Die Cloud schickt eine Liste leerer ``get``-Felder -- das ist die Abfrage
-    fuer den naechsten Durchlauf. Ein Feld mit ``set`` und einem Wert ist ein
+    für den nächsten Durchlauf. Ein Feld mit ``set`` und einem Wert ist ein
     Schaltbefehl.
 
-    Hinweis: dass das Geraet ``set``-Befehle auf diesem Weg annimmt, ist aus
-    dem Aufbau der Antwort abgeleitet und noch nicht am Geraet verifiziert.
+    Hinweis: dass das Gerät ``set``-Befehle auf diesem Weg annimmt, ist aus
+    dem Aufbau der Antwort abgeleitet und noch nicht am Gerät verifiziert.
     """
     parts = ['<sc><d><c n="%s:setADM" v="(2)f" />' % channel]
     for param in KNOWN_PARAMS:
@@ -82,7 +82,7 @@ def build_cloud_response(
 
 
 def parse_int(value: str | None) -> int | None:
-    """Fuehrende Ziffern aus einem Wert wie ``2529 mbar`` holen."""
+    """Führende Ziffern aus einem Wert wie ``2529 mbar`` holen."""
     if not value:
         return None
     if match := re.search(r"-?\d+", value):

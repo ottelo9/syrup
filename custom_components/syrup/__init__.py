@@ -1,7 +1,7 @@
 """SYRUP - SYR Safe-T+ Connect ohne Cloud.
 
 Die Integration stellt den Endpunkt bereit, den die Control-Box sonst in der
-Herstellercloud anspricht. Damit das Geraet hier landet, muss
+Herstellercloud anspricht. Damit das Gerät hier landet, muss
 ``iot1.syrconnect.de`` im lokalen Netz auf diese Home-Assistant-Instanz
 zeigen -- siehe README.
 """
@@ -38,7 +38,7 @@ PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.V
 
 
 class SyrupHub:
-    """Haelt den Zustand eines Geraets und die offenen Schaltbefehle."""
+    """Hält den Zustand eines Geräts und die offenen Schaltbefehle."""
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
         self.hass = hass
@@ -59,7 +59,7 @@ class SyrupHub:
         return f"{SIGNAL_UPDATE}_{self.serial}"
 
     def queue_command(self, param: str, value: str) -> None:
-        """Einen Befehl fuer die naechste Antwort an das Geraet vormerken."""
+        """Einen Befehl für die nächste Antwort an das Gerät vormerken."""
         self.pending[param] = value
 
     def apply(self, message: DeviceMessage) -> None:
@@ -89,12 +89,12 @@ class SyrupDeviceView(HomeAssistantView):
             return web.Response(status=400, text="")
 
         message = parse_device_message(inner)
-        _LOGGER.debug("Von %s (Schluessel 0x%02X): %s", message.serial, key, inner)
+        _LOGGER.debug("Von %s (Schlüssel 0x%02X): %s", message.serial, key, inner)
 
         hub = self._find_hub(message.serial)
         if hub is None:
             _LOGGER.info(
-                "Meldung von unbekanntem Geraet %s - Integration dafuer nicht eingerichtet",
+                "Meldung von unbekanntem Gerät %s - Integration dafür nicht eingerichtet",
                 message.serial,
             )
             return await self._respond(None, key, cp, body)
@@ -129,7 +129,7 @@ class SyrupDeviceView(HomeAssistantView):
             hub.pending.clear()
         interval = hub.poll_interval if hub else DEFAULT_POLL_INTERVAL
         inner = build_cloud_response(commands=commands, poll_interval=interval)
-        # Denselben Schluessel benutzen, den das Geraet gerade geschickt hat.
+        # Denselben Schlüssel benutzen, den das Gerät gerade geschickt hat.
         return web.Response(
             text=codec.build_body(inner, key, cp),
             content_type="text/xml",

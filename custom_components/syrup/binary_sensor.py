@@ -26,7 +26,7 @@ async def async_setup_entry(
 
 
 class SyrupAlarm(SyrupEntity, BinarySensorEntity):
-    """Meldet, ob das Geraet einen Alarm anzeigt."""
+    """Meldet, ob das Gerät einen Alarm anzeigt."""
 
     _attr_device_class = BinarySensorDeviceClass.PROBLEM
 

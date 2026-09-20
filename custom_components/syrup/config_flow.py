@@ -29,7 +29,7 @@ SCHEMA = vol.Schema(
 
 
 class SyrupConfigFlow(ConfigFlow, domain=DOMAIN):
-    """Fragt ab, welches Geraet eingebunden werden soll."""
+    """Fragt ab, welches Gerät eingebunden werden soll."""
 
     VERSION = 1
 
@@ -53,7 +53,7 @@ class SyrupConfigFlow(ConfigFlow, domain=DOMAIN):
 
 
 class SyrupOptionsFlow(OptionsFlow):
-    """Taktrate und Weiterleitung nachtraeglich aendern."""
+    """Taktrate und Weiterleitung nachträglich ändern."""
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None

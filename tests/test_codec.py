@@ -3,7 +3,7 @@
 Die Dateien in ``fixtures/`` sind die rohen HTTP-Nachrichten aus einem
 FRITZ!Box-Mitschnitt. An den TCP-Segmentgrenzen fehlen dort vereinzelt Bytes,
 deshalb wird nicht auf die ganze Nachricht verglichen, sondern auf Werte, die
-in allen vier Mitschnitten uebereinstimmen.
+in allen vier Mitschnitten übereinstimmen.
 """
 
 import pathlib
@@ -45,7 +45,7 @@ def test_cloudantwort_wird_lesbar(path: pathlib.Path) -> None:
 
 
 def test_werte_aus_einer_meldung() -> None:
-    # 59106 ist der Mitschnitt, dessen Druckwert nicht in eine Luecke faellt.
+    # 59106 ist der Mitschnitt, dessen Druckwert nicht in eine Lücke fällt.
     payload, _cp = codec.extract_payload(read(FIXTURES / "syr_59106_req.bin"))
     message = protocol.parse_device_message(codec.decode(payload))
 
@@ -59,8 +59,8 @@ def test_werte_aus_einer_meldung() -> None:
 
 
 def test_unveraendert_uebertragene_zeichen() -> None:
-    # Bei Schluessel 0x1A ergibt jedes "e" nach dem XOR 0x7F und wird deshalb
-    # unveraendert uebertragen. Ohne Sonderbehandlung stuende hier "gtSRN".
+    # Bei Schlüssel 0x1A ergibt jedes "e" nach dem XOR 0x7F und wird deshalb
+    # unverändert übertragen. Ohne Sonderbehandlung stünde hier "gtSRN".
     payload, _cp = codec.extract_payload(read(FIXTURES / "syr_62601_req.bin"))
     decoded = codec.decode(payload)
 
@@ -77,8 +77,8 @@ def test_hin_und_zurueck(key: int) -> None:
 
 def test_schluessel_wird_ohne_hinweis_gefunden() -> None:
     original = '<d><c n="1:getSRN" v="68SPAAEW"/></d>'
-    # Schluessel ab 0x80 kaemen mit ASCII-Klartext nie vor und koennten
-    # zufaellig auf einem Ersatzzeichen landen.
+    # Schlüssel ab 0x80 kämen mit ASCII-Klartext nie vor und könnten
+    # zufällig auf einem Ersatzzeichen landen.
     for key in range(0x80):
         assert codec.find_key(codec.encode(original, key)) == key
 

@@ -1,12 +1,12 @@
 """Absperrventil der Control-Box.
 
-Das Schalten laeuft ueber einen ``set``-Befehl in der Antwort auf die naechste
-Meldung des Geraets. Das Geraet meldet sich im Standardtakt alle 10 Sekunden,
+Das Schalten läuft über einen ``set``-Befehl in der Antwort auf die nächste
+Meldung des Geräts. Das Gerät meldet sich im Standardtakt alle 10 Sekunden,
 so lange dauert es also maximal, bis ein Befehl greift.
 
-Achtung: dass das Geraet ``setAB`` auf diesem Weg annimmt, ist aus dem Aufbau
-der Cloud-Antwort abgeleitet und noch nicht am Geraet verifiziert. Verlasse
-dich fuer den Wasserschaden-Ernstfall nicht darauf, bevor du es geprueft hast.
+Achtung: dass das Gerät ``setAB`` auf diesem Weg annimmt, ist aus dem Aufbau
+der Cloud-Antwort abgeleitet und noch nicht am Gerät verifiziert. Verlasse
+dich für den Wasserschaden-Ernstfall nicht darauf, bevor du es geprüft hast.
 """
 
 from __future__ import annotations

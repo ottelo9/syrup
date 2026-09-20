@@ -1,13 +1,13 @@
 # Das SYR-Connect-Protokoll der Control-Box
 
 Analysiert an einem **SYR Safe-T+ Connect** (Modulnummer 2421.00.010,
-Firmware 1.85, Geraetekennung `Safe-T+ V2.00e`) anhand eines
+Firmware 1.85, Gerätekennung `Safe-T+ V2.00e`) anhand eines
 FRITZ!Box-Mitschnitts vom 20.09.2026.
 
 ## Transport
 
 Die Box meldet sich im Standardtakt **alle 10 Sekunden** bei der
-Herstellercloud -- unverschluesselt, ohne Authentifizierung:
+Herstellercloud -- unverschlüsselt, ohne Authentifizierung:
 
 ```http
 POST /WebServices/SyrConnectDeviceWebService.asmx/GetAllCommands HTTP/1.1
@@ -19,10 +19,10 @@ Content-Type: application/x-www-form-urlencoded
 xml=<sc><cp v="74DD" /><dat v="NUTZLAST" /></sc>
 ```
 
-Aeltere oder andere Firmwarestaende sprechen teils `syrconnect.consoft.de`
+Aeltere oder andere Firmwarestände sprechen teils `syrconnect.consoft.de`
 an. Der Taktgeber ist die Cloud: ihre Antwort endet auf `<ct rt="10" />`.
 
-Die Antwort kommt im selben Aufbau zurueck:
+Die Antwort kommt im selben Aufbau zurück:
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -37,22 +37,22 @@ Die Antwort kommt im selben Aufbau zurueck:
 Das `dat`-Attribut ist kein Chiffrat im kryptografischen Sinn, sondern eine
 Verschleierung in drei Schritten:
 
-1. Klartext-XML **XOR ein Ein-Byte-Schluessel**. Der Schluessel wechselt pro
+1. Klartext-XML **XOR ein Ein-Byte-Schlüssel**. Der Schlüssel wechselt pro
    Nachricht; beobachtet wurden 0x14, 0x16, 0x18, 0x1A und 0x1E.
-2. Sieben Bytes, die anschliessend im form-urlencodeten Rumpf oder im
-   XML-Attribut stoeren wuerden, werden durch je ein Sonderzeichen ersetzt:
+2. Sieben Bytes, die anschließend im form-urlencodeten Rumpf oder im
+   XML-Attribut stören würden, werden durch je ein Sonderzeichen ersetzt:
 
    | Byte nach XOR | 0x22 `"` | 0x25 `%` | 0x26 `&` | 0x27 `'` | 0x2B `+` | 0x3C `<` | 0x3E `>` |
    |---------------|----------|----------|----------|----------|----------|----------|----------|
-   | uebertragen   | `Ä`      | `ä`      | `Ü`      | `ö`      | `€`      | `Ö`      | `ü`      |
+   | übertragen   | `Ä`      | `ä`      | `Ü`      | `ö`      | `€`      | `Ö`      | `ü`      |
 
 3. Das Ergebnis wird als UTF-8 gesendet.
 
-### Schluessel zurueckrechnen
+### Schlüssel zurückrechnen
 
-Der Schluessel steht in keiner Nachricht -- wie `cp` ihn kodiert (falls
-ueberhaupt), ist offen. Er laesst sich aber direkt ableiten, weil die
-Nutzlast immer mit `<d>` (Geraet) bzw. `<sc>` (Cloud) beginnt:
+Der Schlüssel steht in keiner Nachricht -- wie `cp` ihn kodiert (falls
+überhaupt), ist offen. Er lässt sich aber direkt ableiten, weil die
+Nutzlast immer mit `<d>` (Gerät) bzw. `<sc>` (Cloud) beginnt:
 
 ```python
 key = cipher[1] ^ ord("d")
@@ -63,14 +63,14 @@ key = cipher[1] ^ ord("d")
 ### Sonderfall 0x7F
 
 Ergibt ein Zeichen nach dem XOR das Steuerzeichen **DEL** (0x7F), wird nicht
-das Ergebnis uebertragen, sondern das **unveraenderte Zeichen**. Das ist
-eindeutig umkehrbar, weil 0x7F im Klartext nicht vorkommt: faellt beim
-Entschluesseln 0x7F an, war das gesendete Byte bereits das Original.
+das Ergebnis übertragen, sondern das **unveränderte Zeichen**. Das ist
+eindeutig umkehrbar, weil 0x7F im Klartext nicht vorkommt: fällt beim
+Entschlüsseln 0x7F an, war das gesendete Byte bereits das Original.
 
-Je nach Schluessel trifft das ein anderes Zeichen. Wer den Sonderfall nicht
-kennt, liest an diesen Stellen DEL und haelt das Zeichen fuer verschluckt:
+Je nach Schlüssel trifft das ein anderes Zeichen. Wer den Sonderfall nicht
+kennt, liest an diesen Stellen DEL und hält das Zeichen für verschluckt:
 
-| Schluessel | betroffenes Zeichen | naiv gelesen                   |
+| Schlüssel | betroffenes Zeichen | naiv gelesen                   |
 |------------|---------------------|--------------------------------|
 | 0x1E       | `a`                 | `S<DEL>fe-T+`, `Al<DEL>rms`    |
 | 0x16       | `i`                 | `Engl<DEL>sh`, `<c<DEL> m=`    |
@@ -80,7 +80,7 @@ Die Cloud macht es genauso -- offenbar dieselbe Bibliothek auf beiden Seiten.
 
 ## Inhalt der Nachrichten
 
-### Geraet an Cloud
+### Gerät an Cloud
 
 ```xml
 <d>
@@ -103,9 +103,9 @@ Die Cloud macht es genauso -- offenbar dieselbe Bibliothek auf beiden Seiten.
 
 Nicht sicher gedeutet: `NPS` (stieg im Mitschnitt 1147 -> 1160 -> 1173),
 `TPA`, `VLV`, `T1`, `T2`, `TBS`, `TC`, `TO`, `TMP`, `TYP`, `UL`, `REL`,
-`get71`, das `b`-Attribut und die Pruefsumme `cs`.
+`get71`, das `b`-Attribut und die Prüfsumme `cs`.
 
-### Cloud an Geraet
+### Cloud an Gerät
 
 ```xml
 <sc><d>
@@ -116,23 +116,23 @@ Nicht sicher gedeutet: `NPS` (stieg im Mitschnitt 1147 -> 1160 -> 1173),
 </d><ct rt="10" /></sc>
 ```
 
-Eine Liste **leerer `get`-Felder** ist die Abfrage fuer den naechsten
+Eine Liste **leerer `get`-Felder** ist die Abfrage für den nächsten
 Durchlauf. Die Cloud fragt dabei mehr Parameter ab, als das Safe-T+
 beantwortet -- unter anderem `BAT`, `BLT`, `BSA`, `BSI`, `BUZ`, `CEL`,
 `CNO`, `DBD`, `DBT`, `DCM`, `DMA`, `DOM`, `DPL`, `DRP`, `DST`, `DTC`,
 `EXI`, `EXT`, `FLL`, `INT`, `LE`.
 
 **Schaltbefehle** sind vermutlich Felder mit `set` und einem Wert, also etwa
-`<c n="1:setAB" v="2"/>` zum Schliessen des Ventils. Der
+`<c n="1:setAB" v="2"/>` zum Schließen des Ventils. Der
 [ioBroker-Adapter](https://github.com/eifel-tech/ioBroker.syrconnect) baut
 seine Antworten genau so. **Im Mitschnitt war kein Schaltbefehl enthalten,
-das ist also noch nicht am Geraet verifiziert.**
+das ist also noch nicht am Gerät verifiziert.**
 
 ## Was noch offen ist
 
-* Wie `cp` zustande kommt und ob es den Schluessel enthaelt.
-* Wie `cs` berechnet wird -- das Geraet koennte Antworten mit falscher
-  Pruefsumme verwerfen.
-* Ob `setAB` tatsaechlich schaltet, und welcher Wert fuer "zu" steht.
-  Zum Klaeren: Mitschnitt laufen lassen und dabei in der SYR-App das Ventil
-  schliessen.
+* Wie `cp` zustande kommt und ob es den Schlüssel enthält.
+* Wie `cs` berechnet wird -- das Gerät könnte Antworten mit falscher
+  Prüfsumme verwerfen.
+* Ob `setAB` tatsächlich schaltet, und welcher Wert für "zu" steht.
+  Zum Klären: Mitschnitt laufen lassen und dabei in der SYR-App das Ventil
+  schließen.

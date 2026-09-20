@@ -1,4 +1,4 @@
-"""Gemeinsame Basis fuer alle SYRUP-Entitaeten."""
+"""Gemeinsame Basis für alle SYRUP-Entitäten."""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ from .const import DOMAIN
 
 
 class SyrupEntity(Entity):
-    """Entitaet, die ihre Werte aus der letzten Geraetemeldung zieht."""
+    """Entität, die ihre Werte aus der letzten Gerätemeldung zieht."""
 
     _attr_has_entity_name = True
     _attr_should_poll = False
