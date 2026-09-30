@@ -1,0 +1,276 @@
+// @name: SYR RS485
+// @info: https://github.com/ottelo9/syrup
+// syr_rs485.tc - passive listener on the RS-485 service bus of a SYR Safe-T+.
+// The WLAN control box polls the valve controller every ~10 s (19200 8N1):
+//   request  = CR LF ESC "1:" getBAR CR LF
+//   response = value CR           (e.g. "2529 mbar")
+// We only receive (serial TX = -1, transceiver DE tied to GND) and pair each
+// response with the request before it.
+// Console: SyrPin <gpio> (RX pin, saved), SyrRaw 0|1|2 (log lines / raw bytes).
+// Needs ESP32, any free slot, a free hardware UART.
+
+char syr_vers[] = "30.09.2026";
+
+// ─── Settings ──────────────────────────────────────────────────────────────
+persist int syr_pin1;           // RX GPIO + 1, 0 = not set (GPIO 0 is valid)
+
+// ─── Runtime ───────────────────────────────────────────────────────────────
+#define NPAR 12
+#define VLEN 40
+#define QLEN 16
+
+int  sh = -1;                   // serial handle
+int  raw;                       // 1 = log request/response lines, 2 = raw bytes
+int  idle;                      // 50 ms ticks without a byte
+int  age = -1;                  // seconds since the last accepted value, -1 = never
+
+byte rb[64];                    // receive chunk
+char req[48];                   // current request (after ESC)
+char line[VLEN];                // current response line
+int  rl;
+int  ll;
+int  inreq;
+
+int  q[QLEN];                   // params waiting for their response (-1 = ignore)
+int  qh;
+int  qn;
+
+char val[NPAR][VLEN];           // last value per known param
+char tmp[VLEN];
+char tmp2[VLEN];
+char hx[] = "0123456789ABCDEF";
+
+// ─── Param table ───────────────────────────────────────────────────────────
+// Index order is used by web rows and JSON below.
+int pidx(char p[]) {
+    if (strcmp(p, "SRN") == 0) return 0;
+    if (strcmp(p, "VER") == 0) return 1;
+    if (strcmp(p, "AB") == 0)  return 2;
+    if (strcmp(p, "ALA") == 0) return 3;
+    if (strcmp(p, "ALM") == 0) return 4;
+    if (strcmp(p, "AVO") == 0) return 5;
+    if (strcmp(p, "BAR") == 0) return 6;
+    if (strcmp(p, "VOL") == 0) return 7;
+    if (strcmp(p, "NET") == 0) return 8;
+    if (strcmp(p, "BAT") == 0) return 9;
+    if (strcmp(p, "SRV") == 0) return 10;
+    if (strcmp(p, "CEL") == 0) return 11;
+    return -1;
+}
+
+// Plausibility per param: a desynced queue must not store a wrong value.
+int plausible(int k) {
+    if (k == 2) return strlen(line) == 1;
+    if (k == 5) return strEndsWith(line, "mL");
+    if (k == 6) return strContains(line, "bar");
+    if (k == 7) return strStartsWith(line, "Vol");
+    if (k == 8) return strStartsWith(line, "ADC");
+    return 1;
+}
+
+// ─── Queue ─────────────────────────────────────────────────────────────────
+void qPush(int k) {
+    if (qn >= QLEN) { qh = (qh + 1) % QLEN; qn--; }   // drop oldest
+    q[(qh + qn) % QLEN] = k;
+    qn++;
+}
+
+int qPop() {
+    if (qn == 0) return -1;
+    int k = q[qh];
+    qh = (qh + 1) % QLEN;
+    qn--;
+    return k;
+}
+
+void syncReset() {
+    qh = 0; qn = 0;
+    inreq = 0; rl = 0; ll = 0;
+}
+
+// ─── Parser ────────────────────────────────────────────────────────────────
+void reqDone() {
+    req[rl] = 0;
+    rl = 0;
+    inreq = 0;
+    if (raw == 1) addLog("SYR > %s", req);
+    int k = -1;
+    int c = strFind(req, ":");
+    if (c >= 0) {
+        strSub(tmp, req, c + 1, 0);
+        if (strStartsWith(tmp, "get")) {
+            strSub(tmp2, tmp, 3, 0);
+            k = pidx(tmp2);
+        }
+    }
+    qPush(k);                   // set/clr/unknown still get an answer
+}
+
+void respDone() {
+    line[ll] = 0;
+    if (ll == 0) return;        // CR of the CR LF framing
+    ll = 0;
+    if (raw == 1) addLog("SYR < %s", line);
+    int k = qPop();
+    if (k >= 0 && plausible(k)) {
+        strcpy(val[k], line);
+        age = 0;
+    }
+}
+
+void feed(int n) {
+    int i = 0;
+    while (i < n) {
+        int b = rb[i];
+        i++;
+        if (b == 0x1B) { inreq = 1; rl = 0; continue; }
+        if (inreq) {
+            if (b == 0x0D || b == 0x0A) { reqDone(); continue; }
+            if (rl < 47 && b >= 0x20 && b < 0x7F) { req[rl] = b; rl++; }
+            continue;
+        }
+        if (b == 0x0D) { respDone(); continue; }
+        if (b == 0x0A) continue;
+        if (ll < VLEN - 1 && b >= 0x20 && b < 0x7F) { line[ll] = b; ll++; }
+    }
+}
+
+// Raw mode 2: whole chunk, non-printables as [XX].
+void logChunk(int n) {
+    char o[200];
+    o[0] = 0;
+    int i = 0;
+    int ol = 0;
+    while (i < n && ol < 190) {
+        int b = rb[i];
+        i++;
+        if (b >= 0x20 && b < 0x7F && b != '[') {
+            o[ol] = b; ol++;
+        } else {
+            o[ol] = '['; o[ol + 1] = hx[b >> 4]; o[ol + 2] = hx[b & 15]; o[ol + 3] = ']';
+            ol += 4;
+        }
+    }
+    o[ol] = 0;
+    addLog("SYR raw %s", o);
+}
+
+// ─── Serial ────────────────────────────────────────────────────────────────
+void syrOpen() {
+    if (sh >= 0) { serialClose(sh); sh = -1; }
+    syncReset();
+    if (syr_pin1 <= 0) return;
+    sh = serialBegin(syr_pin1 - 1, -1, 19200, 3, 256);   // RX only
+    if (sh < 0) addLog("SYR: serial open failed on GPIO %d", syr_pin1 - 1);
+}
+
+// ─── Callbacks ─────────────────────────────────────────────────────────────
+void Every50ms() {
+    if (sh < 0) return;
+    int got = 0;
+    int r = 0;
+    while (r < 8) {
+        int n = serialReadArray(sh, rb, 64);
+        if (n <= 0) break;
+        got = 1;
+        if (raw == 2) logChunk(n);
+        feed(n);
+        r++;
+    }
+    if (got) { idle = 0; return; }
+    if (idle < 1000) {
+        idle++;
+        if (idle == 20) syncReset();   // 1 s silence: poll cycle over, resync
+    }
+}
+
+void EverySecond() {
+    if (age >= 0 && age < 100000) age++;
+}
+
+// Numeric views of the stored strings.
+float fBar()  { return strToInt(val[6]) / 1000.0; }
+int   iAvo()  { return strToInt(val[5]); }
+float fVolM3() {
+    int p = strFind(val[7], "]");
+    strSub(tmp, val[7], p + 1, 0);
+    return strToInt(tmp) / 1000.0;
+}
+float fVolt(int k) {
+    int p = strFind(val[k], " ");
+    strSub(tmp, val[k], p + 1, 0);
+    strReplace(tmp, ",", ".");
+    return strToFloat(tmp);
+}
+
+void WebCall() {
+    char b[96];
+    if (syr_pin1 <= 0) { webSend("{s}SYR{m}RX-Pin fehlt: SyrPin n{e}"); return; }
+    if (sh < 0) { webSend("{s}SYR{m}UART belegt{e}"); return; }
+    if (age < 0) { webSend("{s}SYR{m}keine Daten{e}"); return; }
+    if (strlen(val[6]) > 0) { sprintf(b, "{s}Wasserdruck{m}%.2f bar{e}", fBar()); webSend(b); }
+    if (strlen(val[5]) > 0) { sprintf(b, "{s}Entnahme{m}%d mL{e}", iAvo()); webSend(b); }
+    if (strlen(val[7]) > 0) { sprintf(b, "{s}Gesamtverbrauch{m}%.3f m³{e}", fVolM3()); webSend(b); }
+    if (strlen(val[2]) > 0) {
+        if (strcmp(val[2], "1") == 0) webSend("{s}Ventil{m}offen{e}");
+        else webSend("{s}Ventil{m}geschlossen{e}");
+    }
+    if (strlen(val[3]) > 0) {
+        if (strcmp(val[3], "FF") == 0) webSend("{s}Alarm{m}keiner{e}");
+        else { sprintf(b, "{s}Alarm{m}%s{e}", val[3]); webSend(b); }
+    }
+    if (strlen(val[8]) > 0) { sprintf(b, "{s}Versorgung{m}%.2f V{e}", fVolt(8)); webSend(b); }
+    if (strlen(val[9]) > 0) { sprintf(b, "{s}Batterie{m}%s{e}", val[9]); webSend(b); }
+    sprintf(b, "{s}SYR Daten{m}vor %d s{e}", age);
+    webSend(b);
+}
+
+void JsonCall() {
+    if (age < 0 || age > 600) return;          // never or stale: say nothing
+    char j[256];
+    sprintf(j, ",\"SYR\":{\"Alter\":%d", age);
+    if (strlen(val[6]) > 0) sprintfAppend(j, ",\"Druck\":%.3f", fBar());
+    if (strlen(val[5]) > 0) sprintfAppend(j, ",\"Entnahme\":%d", iAvo());
+    if (strlen(val[7]) > 0) sprintfAppend(j, ",\"Volumen\":%.3f", fVolM3());
+    if (strlen(val[2]) > 0) sprintfAppend(j, ",\"Ventil\":%d", strToInt(val[2]));
+    if (strlen(val[3]) > 0) sprintfAppend(j, ",\"Alarm\":\"%s\"", val[3]);
+    if (strlen(val[8]) > 0) sprintfAppend(j, ",\"Spannung\":%.2f", fVolt(8));
+    strcat(j, "}");
+    responseAppend(j);
+}
+
+void Command(char cmd[]) {
+    char o[64];
+    if (strStartsWith(cmd, "PIN")) {
+        strSub(tmp, cmd, 3, 0);
+        strTrim(tmp);
+        if (strlen(tmp) > 0) {
+            syr_pin1 = strToInt(tmp) + 1;
+            saveVars();
+            syrOpen();
+        }
+        sprintf(o, "{\"SyrPin\":%d,\"Uart\":%d}", syr_pin1 - 1, sh);
+        responseCmnd(o);
+        return;
+    }
+    if (strStartsWith(cmd, "RAW")) {
+        strSub(tmp, cmd, 3, 0);
+        strTrim(tmp);
+        if (strlen(tmp) > 0) raw = strToInt(tmp);
+        sprintf(o, "{\"SyrRaw\":%d}", raw);
+        responseCmnd(o);
+        return;
+    }
+    sprintf(o, "{\"SyrPin\":%d,\"Uart\":%d,\"Alter\":%d}", syr_pin1 - 1, sh, age);
+    responseCmnd(o);
+}
+
+void OnExit() {
+    if (sh >= 0) serialClose(sh);
+}
+
+int main() {
+    addCommand("SYR");
+    syrOpen();
+    return 0;
+}

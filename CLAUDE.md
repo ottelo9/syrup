@@ -18,6 +18,15 @@ Author: ottelo – github.com/ottelo9 (remote `https://github.com/ottelo9/syrup.
 | `tools/Decode-SyrCapture.ps1` | FRITZ!Box capture (`.eth`) → plaintext, no Wireshark/Python needed |
 | `tests/test_codec.py`, `tests/fixtures/*.bin` | pytest against 8 real captured HTTP messages |
 | `hacs.json`, `.github/workflows/validate.yml` | HACS metadata; CI = pytest + hassfest + hacs/action |
+| `tinyc/syr_rs485.tc`, `.tcb` | alternative transport: Tasmota TinyC program, passive RS-485 listener (see below) |
+
+## RS-485 service bus (TinyC program)
+
+- RJ10 (4P4C) under the device, RS-485 on the two middle pins, 19200 8N1, plain ASCII. Outer pins undocumented.
+- The WLAN control box is bus master and polls every ~10 s while it is online with the cloud: request `CR LF ESC "1:" getBAR CR LF`, response `2529 mbar CR` (values only, no names). The `1:` is the same prefix as in the cloud XML – the box forwards cloud commands onto the bus. Documented writes: `setAB1` open, `setAB2` close.
+- `syr_rs485.tc` only receives (`serialBegin(rx, -1, …)`, transceiver DE on GND). Requests go into a 16-entry FIFO, each response line pops one; per-param plausibility checks, resync after 1 s silence.
+- Console: `SyrPin <gpio>` (persist, stored as GPIO+1 so 0 = unset), `SyrRaw 0|1|2`. JSON: `,"SYR":{"Alter","Druck","Entnahme","Volumen","Ventil","Alarm","Spannung"}` – German keys avoid Tasmota's HA auto device classes.
+- Build: gemu's compiler via Node (`tcc.mjs`, see the tasmota-sml-script notes). Test: gemu's JS VM with syscall 555 (`serialReadArray`) overridden to feed simulated bus traffic.
 
 ## Protocol (verified against captures)
 
