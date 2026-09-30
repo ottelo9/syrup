@@ -4,10 +4,10 @@
   "codeowners": [],
   "config_flow": true,
   "dependencies": ["http"],
-  "documentation": "https://github.com/ottelo/syrup",
+  "documentation": "https://github.com/ottelo9/syrup",
   "integration_type": "device",
   "iot_class": "local_push",
-  "issue_tracker": "https://github.com/ottelo/syrup/issues",
+  "issue_tracker": "https://github.com/ottelo9/syrup/issues",
   "requirements": [],
-  "version": "0.1.0"
+  "version": "2026.09.30"
 }

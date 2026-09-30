@@ -57,3 +57,4 @@ Author: ottelo – github.com/ottelo9 (remote `https://github.com/ottelo9/syrup.
 - Python identifiers stay ASCII (e.g. `test_schluessel_…`).
 - `.ps1` files stay ASCII: Windows PowerShell 5.1 reads BOM-less scripts as ANSI.
 - `.gitattributes`: `*.bin binary` – fixtures must never get EOL conversion.
+- Versions are release dates, `YYYY.MM.DD` (second release that day: `.1`). Dashes (`2026-09-30`) are rejected by HA/AwesomeVersion and block loading. `manifest.json` `version` and the GitHub release tag must be identical; bump the manifest first, then create the release. No pre-releases – HACS hides them.
